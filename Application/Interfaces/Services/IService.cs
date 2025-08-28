@@ -1,7 +1,7 @@
 ﻿namespace Application.Interfaces.Services;
 
 //Marker
-public interface IServices
+public interface IService
 {
 }
 

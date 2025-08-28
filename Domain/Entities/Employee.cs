@@ -1,29 +1,26 @@
-﻿using Shared.Enums;
+﻿using Domain.Enums;
+using Domain.ValueObject;
 
 namespace Domain.Entities;
 
-public class Employee(string id, EmployeeNr employeeNr, string lastName, Gender sex) 
+public class Employee
 {
-    public string Id { get; } = id;
-    public EmployeeNr EmployeeNr { get; } = employeeNr;
-    public string LastName { get; } = lastName;
-    public Gender Sex { get; } = sex;
-}
+    public string Id { get; init; }
+    public EmployeeNr EmployeeNr { get; init; }
+    public LastName LastName { get; private set; }
+    public Sex Sex { get; private set; }
 
-
-public record EmployeeNr
-{
-    private readonly string _value;
-
-    public EmployeeNr(string value)
+    public Employee(string id, EmployeeNr employeeNr, LastName lastName, Sex sex)
     {
-        if (string.IsNullOrWhiteSpace(value) || value.Length != 8)
-        {
-            throw new ArgumentException("Błędny format EmployeeNr");
-        }
-        _value = value;
+        Id = id;
+        EmployeeNr = employeeNr ?? throw new ArgumentNullException(nameof(employeeNr));
+        LastName = lastName ?? throw new ArgumentNullException(nameof(lastName));
+        Sex = sex ?? throw new ArgumentNullException(nameof(sex));
     }
 
-    public static implicit operator string(EmployeeNr employeeNr) => employeeNr._value;
-    public override string ToString() => _value;
+    public void UpdateInfo(LastName newLastName, Sex newSex)
+    {
+        LastName = newLastName ?? throw new ArgumentNullException(nameof(newLastName));
+        Sex = newSex ?? throw new ArgumentNullException(nameof(newSex));
+    }
 }

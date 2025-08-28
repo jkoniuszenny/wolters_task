@@ -1,43 +1,27 @@
 ﻿using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Domain.Entities;
-using Shared.Settings;
-using System.Xml.Linq;
 
 namespace Application.CQRS.Employees.Commands.Create;
 
-internal sealed class EmployeeCreateCommandHandler : IRequestHandler<EmployeeCreateCommand, GlobalResponse>
+internal sealed class EmployeeCreateCommandHandler(
+    IAsyncRepository repository,
+    IEmployeeNrGeneratorService employeeNrGeneratorService) : IRequestHandler<EmployeeCreateCommand, GlobalResponse>
 {
-    private readonly IAsyncRepository _repository;
-
-    public EmployeeCreateCommandHandler(
-        IAsyncRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<GlobalResponse> Handle(EmployeeCreateCommand request, CancellationToken cancellationToken)
     {
         var id = Guid.NewGuid().ToString();
 
-
-        var employeeNr = "";
-
+        var employeeNr = await employeeNrGeneratorService.GenerateNr();
 
         var employee = new Employee(
             id: id,
-            employeeNr: new EmployeeNr(employeeNr),
+            employeeNr: employeeNr,
             lastName: request.LastName,
             sex: request.Sex
             );
 
-
-
-        var number = _numberGenerator.Next();
-        var employee = new Employee(number, name, email);
-
-        _repository.Add(employee);
-
-        return employee;
+        await  repository.Insert(employee);
 
         return await GlobalResponse.SuccessAsync();
     }

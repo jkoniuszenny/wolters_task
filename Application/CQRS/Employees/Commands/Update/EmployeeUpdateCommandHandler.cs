@@ -1,38 +1,26 @@
 ﻿using Application.CQRS.Employees.Commands.Create;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
+using Domain.ValueObject;
 using Shared.Settings;
 
 namespace Application.CQRS.Employees.Commands.Update;
 
-internal sealed class EmployeeUpdateCommandHandler : IRequestHandler<EmployeeCreateCommand, GlobalResponse>
+internal sealed class EmployeeUpdateCommandHandler(
+    IAsyncRepository repository) : IRequestHandler<EmployeeUpdateCommand, GlobalResponse>
 {
-    private readonly IAsyncRepository _repository;
-    private readonly CurrencySettings _currencySettings;
-
-    public EmployeeUpdateCommandHandler(
-        IAsyncRepository repository,
-         CurrencySettings currencySettings)
-    {
-        _repository = repository;
-        _currencySettings = currencySettings;
-    }
-
-    public async Task<GlobalResponse> Handle(EmployeeCreateCommand request, CancellationToken cancellationToken)
+    public async Task<GlobalResponse> Handle(EmployeeUpdateCommand request, CancellationToken cancellationToken)
     {
 
-        var newWallet = new Wallets
-        {
-            Name = request.Name,
-            Currencies = [.. request.InitValue.Select(s => new Currency
-            {
-                Name = _currencySettings.Codes.First(f=>f.Code == s.Code).Name,
-                Code = s.Code,
-                Value = s.Value
-            })]
-        };
+        var newLastName = new LastName(request.LastName.ToString());
+        var newGender = request.Sex;
 
-        await _repository.InsertList([newWallet]);
+        var existedEmployee = await repository.Select<Employee>(a => a.Id == request.EmployeeId) 
+            ?? throw new InvalidOperationException($"Pracownik o ID '{request.EmployeeId}' nie znaleziony.");
+
+        existedEmployee.UpdateInfo(newLastName, newGender);
+
+        await repository.Update(existedEmployee);
 
         return await GlobalResponse.SuccessAsync();
     }

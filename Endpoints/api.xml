@@ -4,31 +4,7 @@
         <name>EndpointsController</name>
     </assembly>
     <members>
-        <member name="M:EndpointsController.Endpoints.Transaction.NewTransactionAdd.ExecuteAsync(MediatR.IMediator,Application.CQRS.Transaction.Commands.NewTransactionAdd.NewTransactionAddInput)">
-            <summary>
-            NewTransactionAdd
-            </summary>
-            <param name="mediator"></param>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:EndpointsController.Endpoints.Transaction.NewTransactionConvert.ExecuteAsync(MediatR.IMediator,Application.CQRS.Transaction.Commands.NewTransactionConvert.NewTransactionConvertInput)">
-            <summary>
-            NewTransactionConvert
-            </summary>
-            <param name="mediator"></param>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:EndpointsController.Endpoints.Transaction.NewTransactionSubtract.ExecuteAsync(MediatR.IMediator,Application.CQRS.Transaction.Commands.NewTransactionSubtract.NewTransactionSubtractInput)">
-            <summary>
-            NewTransactionSubtract
-            </summary>
-            <param name="mediator"></param>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:EndpointsController.Endpoints.Wallet.WalletCreate.ExecuteAsync(MediatR.IMediator,Application.CQRS.Wallet.Commands.WalletCreate.WalletCreateInput)">
+        <member name="M:EndpointsController.Endpoints.Employee.WalletCreate.ExecuteAsync(MediatR.IMediator,Application.CQRS.Employees.Commands.Create.EmployeeCreateData)">
             <summary>
             WalletCreate
             </summary>
@@ -36,13 +12,13 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:EndpointsController.Endpoints.Wallet.WalletGet.ExecuteAsync(MediatR.IMediator,Application.CQRS.Wallet.Queries.WalletGet.WalletGetQuery,Application.CQRS.Wallet.Queries.WalletGet.WalletGetQuery)">
+        <member name="M:EndpointsController.Endpoints.Employee.EmployeeUpdate.ExecuteAsync(MediatR.IMediator,Application.CQRS.Employees.Commands.Update.EmployeeUpdateData,System.String)">
             <summary>
-            WalletGet
+            EmployeeUpdate
             </summary>
             <param name="mediator"></param>
-            <param name="fromQuery"></param>
-            <param name="query"></param>
+            <param name="input"></param>
+            <param name="employeeId"></param>
             <returns></returns>
         </member>
     </members>

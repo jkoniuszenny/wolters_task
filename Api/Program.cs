@@ -15,6 +15,7 @@ using System.Text;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
+#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
 try
 {
 
@@ -61,21 +62,6 @@ try
         IssuerSigningKeys = configuration["Token:SecretKeys"]?.Split(",", StringSplitOptions.TrimEntries).Select(s => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(s)))
     });
 
-    if (Convert.ToBoolean(configuration["Hangfire:Enabled"]))
-    {
-
-        GlobalConfiguration.Configuration
-            .UseNLogLogProvider();
-
-        builder.Services.AddHangfire(x => x
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UseInMemoryStorage()
-        );
-
-        builder.Services.AddHangfireServer(options => options.Queues = ["nbp"]);
-    }
 
     builder.Services.Configure<JsonOptions>(options =>
     {
@@ -144,28 +130,8 @@ try
     app.UseAuthentication();
 
     app.ConfigureBuffer();
-    app.UsernameLog();
     app.RequestLog();
 
-    if (Convert.ToBoolean(configuration["Hangfire:Enabled"]))
-    {
-        var hangfireSettings = configuration.GetSettings<HangfireSettings>();
-
-        app.UseHangfireDashboard("/hangfire", new DashboardOptions
-        {
-            DashboardTitle = "Hangfire Api",
-            Authorization =
-            [
-                new HangfireCustomBasicAuthenticationFilter
-                {
-                    User = hangfireSettings.Username,
-                    Pass = hangfireSettings.Password
-                }
-            ]
-        });
-
-        HangfireSetUpProvider.RecurringJobSetUp(app, hangfireSettings);
-    }
 
     app.UseMinimalEndpoints(c => c.ProjectName = "EndpointsController");
 
@@ -181,3 +147,4 @@ finally
 {
     LogManager.Shutdown();
 }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both

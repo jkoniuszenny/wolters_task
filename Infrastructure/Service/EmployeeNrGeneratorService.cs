@@ -1,47 +1,24 @@
 ﻿using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Domain.Entities;
-using MongoDB.Driver.Linq;
+using Domain.ValueObject;
 
-namespace Infrastructure.Providers;
+namespace Infrastructure.Service;
 
-public class EmployeeNrGeneratorService : IEmployeeNrGeneratorService
+public class EmployeeNrGeneratorService(
+    IAsyncRepository repository) : IEmployeeNrGeneratorService
 {
-    private readonly IAsyncRepository _repository;
-
-    public EmployeeNrGeneratorService(
-        IAsyncRepository repository)
-    {
-        _repository = repository;
-    }
-
-    public async Task SaveActualRates()
+    public async Task<EmployeeNr> GenerateNr()
     {
 
+        //RowVersion zapewnia, że podbita liczba zostanie zapisana
+        var lastNumber = await repository.Select<EmployeeNrSequence>(a => true);
 
+        var nextValue = lastNumber.Next();
 
-        var actualNbpTableB = await _nbpApiProvider.NbpSync();
+        //W przypadku błędu z zapisu zmiany należałoby dodać ponowienie, żeby uzyskać kolejny numer
+        await repository.Update(lastNumber);
 
-        var isExistedActualTabeleB = await (await _repository.AsQueryable<Employees>())
-            .Where(x => x.No == actualNbpTableB[0].No)
-            .AnyAsync();
-
-        if (isExistedActualTabeleB) 
-            return;
-        
-        var mappedResult = actualNbpTableB
-            .Select(x =>  new Employees
-            {
-                No = x.No,
-                EffectiveDate = x.EffectiveDate,
-                Rates = [.. x.Rates.Select(s => new Rates
-                {
-                    Currency = s.Currency,
-                    Code = s.Code,
-                    Mid = s.Mid
-                })]
-            })
-            .ToList();
-
-        await _repository.InsertList(mappedResult);
+        return nextValue;
     }
 }

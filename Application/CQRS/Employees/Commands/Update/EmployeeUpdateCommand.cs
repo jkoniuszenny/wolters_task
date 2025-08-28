@@ -1,6 +1,4 @@
-﻿using Application.CQRS.Employee.Commands.Create;
-
-namespace Application.CQRS.Employees.Commands.Update;
+﻿namespace Application.CQRS.Employees.Commands.Update;
 
 public record EmployeeUpdateCommand : EmployeeUpdateInput, IRequest<GlobalResponse>
 {

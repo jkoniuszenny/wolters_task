@@ -13,7 +13,7 @@ public class ServiceModule : Autofac.Module
             .Assembly;
 
         builder.RegisterAssemblyTypes(assembly)
-               .Where(x => x.IsAssignableTo<IServices>())
+               .Where(x => x.IsAssignableTo<IService>())
                .AsImplementedInterfaces()
                .InstancePerDependency();
     }

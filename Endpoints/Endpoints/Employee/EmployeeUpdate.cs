@@ -1,5 +1,5 @@
-﻿using Application.CQRS.Employee.Commands.Update;
-using Application.CQRS.Employees.Commands.Update;
+﻿using Application.CQRS.Employees.Commands.Update;
+using Domain.ValueObject;
 using FastEndpoints.Configuration;
 using FastEndpoints.Enum;
 using MediatR;
@@ -25,13 +25,12 @@ public class EmployeeUpdate : FastEndpoint
     /// <param name="input"></param>
     /// <param name="employeeId"></param>
     /// <returns></returns>
-    //[Authorize]
     public async Task<IResult> ExecuteAsync(IMediator mediator, EmployeeUpdateData input, string employeeId)
     {
         var data = new EmployeeUpdateInput(
-            employeeId: employeeId, 
-            lastName:  input.LastName, 
-            sex: input.Sex
+            EmployeeId: employeeId, 
+            LastName:  new LastName(input.LastName), 
+            Sex: new Sex(input.Sex)
         );
 
 
