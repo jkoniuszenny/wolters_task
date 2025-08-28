@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Mongo2Go;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Shared.Settings;
 
@@ -6,25 +7,35 @@ namespace Infrastructure.Database;
 
 public class DatabaseMongoContext
 {
-    private readonly DatabaseMongoSettings _settings;
-
-    private readonly MongoClient _client;
     private readonly IMongoDatabase _database;
+    public readonly IClientSessionHandle ClientSessionHandle;
 
     public DatabaseMongoContext(
         DatabaseMongoSettings settings
         )
     {
-        _settings = settings;
+        var runner = MongoDbRunner.Start(singleNodeReplSet:true);      
 
-        _client = new MongoClient(_settings.ConnectionString);
-        _database = _client.GetDatabase(_settings.DatabaseName);
+        var client = new MongoClient(runner.ConnectionString);
+        _database = client.GetDatabase(settings.DatabaseName);
+
+        var sessionOptions = new ClientSessionOptions
+        {
+            DefaultTransactionOptions = new TransactionOptions(
+            readConcern: ReadConcern.Majority,
+            writeConcern: WriteConcern.WMajority,
+            readPreference: ReadPreference.Primary)
+        };
+
+        ClientSessionHandle = _database.Client.StartSession(sessionOptions);
+
     }
 
     public async Task<IMongoCollection<T>> GetCollection<T>(string collectionName)
     {
         return await Task.FromResult(_database.GetCollection<T>(collectionName));
     }
+
 
     public async Task<bool> CheckHealthAsync()
     {

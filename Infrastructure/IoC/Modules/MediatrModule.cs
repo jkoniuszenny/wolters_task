@@ -10,7 +10,7 @@ public class MediatrModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        var assembly = typeof(MediatRAutoFacMarker)
+        var assembly = typeof(IMediatrAutoFacMarker)
             .GetTypeInfo()
             .Assembly;
 
@@ -33,11 +33,6 @@ public class MediatrModule : Autofac.Module
         builder.RegisterGeneric(typeof(RequestPostProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
         builder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
 
-        builder.Register<ServiceFactory>(ctx =>
-        {
-            var c = ctx.Resolve<IComponentContext>();
-            return t => c.Resolve(t);
-        });
     }
 }
 
