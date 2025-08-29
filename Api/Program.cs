@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog;
 using NLog.Web;
-using Shared.Extensions;
 using Shared.Settings;
 using System.Text;
 

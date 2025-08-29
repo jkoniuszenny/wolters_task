@@ -1,8 +1,6 @@
-﻿using Application.CQRS.Employees.Commands.Create;
-using Application.Interfaces.Repositories;
+﻿using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Domain.ValueObject;
-using Shared.Settings;
 
 namespace Application.CQRS.Employees.Commands.Update;
 

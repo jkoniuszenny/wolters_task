@@ -1,15 +1,8 @@
-﻿using Application.UnitTest.Fixtures;
-using AutoFixture;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Enums;
 using Domain.ValueObject;
 using Shouldly;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Application.UnitTest.Entities;
@@ -18,7 +11,7 @@ public class EmployeeTests
 {
 
     [Fact]
-    public async Task Constructor_WithValidArguments_ShouldCreateEmployee()
+    public void Constructor_WithValidArguments_ShouldCreateEmployee()
     {
         // Arrange
         var id = Guid.NewGuid().ToString();
@@ -87,8 +80,7 @@ public class EmployeeTests
     [Theory]
     [InlineData(null, "Male")]
     [InlineData("Nowak", null)]
-    public void UpdateInfo_WithNullArgument_ShouldThrowArgumentNullException(
-    string newLastName, string newSex)
+    public void UpdateInfo_WithNullArgument_ShouldThrowArgumentNullException(string newLastName, string newSex)
     {
         var id = Guid.NewGuid().ToString();
         var employeeNr = new EmployeeNr("00000005");
